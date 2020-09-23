@@ -1,0 +1,14 @@
+{
+    "name": "yearn-starter-pack",
+    "devDependencies": {
+        "ethlint": "^1.2.5",
+        "prettier": "^2.1.2",
+        "prettier-plugin-solidity": "^1.0.0-alpha.57"
+    },
+    "scripts": {
+        "lint": "prettier --list-different **/*.sol **/*.json",
+        "lint:check": "prettier --check **/*.sol **/*.json",
+        "lint:fix": "prettier --write **/*.sol **/*.json",
+        "test": "ETHERSCAN_TOKEN=<your-token-here> WEB3_INFURA_PROJECT_ID=<your-token-here> brownie test -s --coverage"
+    }
+}
