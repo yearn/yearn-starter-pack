@@ -5,3 +5,4 @@ build/
 reports/
 node_modules/
 .pytest_cache
+.envrc
