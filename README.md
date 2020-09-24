@@ -35,8 +35,9 @@ TODO
 
 - Install ganache-cli: `npm install -g ganache-cli@6.10.1`
 
-- Setup `ETHERSCAN_TOKEN` & `WEB3_INFURA_PROJECT_ID` on package.json
-    - Remember to NOT commit this file to avoid leaking your credentials 
+- Copy `.envrc.example` to `.envrc`
+
+- Setup `ETHERSCAN_TOKEN` & `WEB3_INFURA_PROJECT_ID`
 
 ### Tests
 
