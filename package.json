@@ -9,6 +9,6 @@
         "lint": "prettier --list-different **/*.sol **/*.json",
         "lint:check": "prettier --check **/*.sol **/*.json",
         "lint:fix": "prettier --write **/*.sol **/*.json",
-        "test": "ETHERSCAN_TOKEN=<your-token-here> WEB3_INFURA_PROJECT_ID=<your-token-here> brownie test -s --coverage"
+        "test": "brownie test -s --coverage"
     }
 }
