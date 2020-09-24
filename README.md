@@ -37,7 +37,8 @@ TODO
 
 - Copy `.envrc.example` to `.envrc`
 
-- Setup `ETHERSCAN_TOKEN` & `WEB3_INFURA_PROJECT_ID`
+- Setup `ETHERSCAN_TOKEN` & `WEB3_INFURA_PROJECT_ID` on `.envrc`
+    - Get them from: [etherscan](https://etherscan.io/apis) and [infura](https://infura.io/) respectively
 
 ### Tests
 
