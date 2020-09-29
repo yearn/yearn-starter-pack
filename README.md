@@ -40,7 +40,9 @@ TODO
 - Setup `ETHERSCAN_TOKEN` & `WEB3_INFURA_PROJECT_ID` on `.envrc`
     - Get them from: [etherscan](https://etherscan.io/apis) and [infura](https://infura.io/) respectively
 
-### Tests
+### 
+
+- Compile contracts with: `npm run compile`
 
 - Run tests with: `npm test`
 
