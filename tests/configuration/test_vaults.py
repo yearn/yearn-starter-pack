@@ -3,11 +3,13 @@ import brownie
 
 from brownie import (
     yVault,
-    yWETH,
-    yDelegatedVault,
+    # yWETH,
+    # yDelegatedVault,
 )
 
-VAULTS = [yVault, yWETH, yDelegatedVault]
+# VAULTS = [yVault, yWETH, yDelegatedVault]
+
+VAULTS = [yVault]
 
 
 @pytest.mark.parametrize("Vault", VAULTS)
