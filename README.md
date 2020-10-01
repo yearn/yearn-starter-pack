@@ -35,6 +35,8 @@ TODO
 
 - Install ganache-cli: `npm install -g ganache-cli@6.10.1`
 
+- Install npm dependencies: `npm install`
+
 - Copy `.env.example` to `.env`
 
 - Setup `ETHERSCAN_TOKEN` & `WEB3_INFURA_PROJECT_ID` on `.env`
