@@ -23,6 +23,10 @@ contract yVault is ERC20, ERC20Detailed {
     address public governance;
     address public controller;
 
+    modifier onlyGovernance() { 
+        require(msg.sender == governance, "!governance");
+        _;
+    }
     constructor(address _token, address _controller)
         public
         ERC20Detailed(
@@ -40,18 +44,15 @@ contract yVault is ERC20, ERC20Detailed {
         return token.balanceOf(address(this)).add(IController(controller).balanceOf(address(token)));
     }
 
-    function setMin(uint256 _min) external {
-        require(msg.sender == governance, "!governance");
+    function setMin(uint256 _min) external onlyGovernance {
         min = _min;
     }
 
-    function setGovernance(address _governance) public {
-        require(msg.sender == governance, "!governance");
+    function setGovernance(address _governance) public onlyGovernance {
         governance = _governance;
     }
 
-    function setController(address _controller) public {
-        require(msg.sender == governance, "!governance");
+    function setController(address _controller) public onlyGovernance {
         controller = _controller;
     }
 

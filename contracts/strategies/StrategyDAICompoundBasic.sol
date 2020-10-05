@@ -37,6 +37,19 @@ contract StrategyDAICompoundBasic{
     address public governance;
     address public controller;
     address public strategist;
+    
+    modifier onlyGovernance() { 
+        require(msg.sender == governance, "!governance");
+        _;
+    }
+    modifier onlyController() { 
+        require(msg.sender == controller, "!controller");
+        _;
+    }
+    modifier onlyStrategist(){
+        require(msg.sender == strategist || msg.sender == governance, "!authorized");
+        _;
+    }
 
     constructor(address _controller) public {
         governance = msg.sender;
@@ -48,18 +61,15 @@ contract StrategyDAICompoundBasic{
         return "StrategyDAICompBasic";
     }
 
-    function setStrategist(address _strategist) external {
-        require(msg.sender == governance, "!governance");
+    function setStrategist(address _strategist) external onlyGovernance {
         strategist = _strategist;
     }
 
-    function setWithdrawalFee(uint256 _withdrawalFee) external {
-        require(msg.sender == governance, "!governance");
+    function setWithdrawalFee(uint256 _withdrawalFee) external onlyGovernance {
         withdrawalFee = _withdrawalFee;
     }
 
-    function setPerformanceFee(uint256 _performanceFee) external {
-        require(msg.sender == governance, "!governance");
+    function setPerformanceFee(uint256 _performanceFee) external onlyGovernance {
         performanceFee = _performanceFee;
     }
 
@@ -73,8 +83,7 @@ contract StrategyDAICompoundBasic{
     }
 
     // Controller only function for creating additional rewards from dust
-    function withdraw(IERC20 _asset) external returns (uint256 balance) {
-        require(msg.sender == controller, "!controller");
+    function withdraw(IERC20 _asset) external returns (uint256 balance) onlyController {
         require(want != address(_asset), "want");
         require(cDAI != address(_asset), "cDAI");
         require(comp != address(_asset), "comp");
@@ -83,8 +92,7 @@ contract StrategyDAICompoundBasic{
     }
 
     // Withdraw partial funds, normally used with a vault withdrawal
-    function withdraw(uint256 _amount) external {
-        require(msg.sender == controller, "!controller");
+    function withdraw(uint256 _amount) external onlyController {
         uint256 _balance = IERC20(want).balanceOf(address(this));
         if (_balance < _amount) {
             _amount = _withdrawSome(_amount.sub(_balance));
@@ -101,8 +109,7 @@ contract StrategyDAICompoundBasic{
     }
 
     // Withdraw all funds, normally used when migrating strategies
-    function withdrawAll() external returns (uint256 balance) {
-        require(msg.sender == controller, "!controller");
+    function withdrawAll() external returns (uint256 balance) onlyController {
         _withdrawAll();
 
         balance = IERC20(want).balanceOf(address(this));
@@ -118,9 +125,8 @@ contract StrategyDAICompoundBasic{
             _withdrawSome(balanceCInToken().sub(1));
         }
     }
-
-    function harvest() public {
-        require(msg.sender == strategist || msg.sender == governance, "!authorized");
+    
+    function harvest() public onlyStrategist {
         compound.claimComp(address(this));
         uint256 _comp = IERC20(comp).balanceOf(address(this));
         if (_comp > 0) {
@@ -179,13 +185,11 @@ contract StrategyDAICompoundBasic{
         return balanceOfWant().add(balanceCInToken());
     }
 
-    function setGovernance(address _governance) external {
-        require(msg.sender == governance, "!governance");
+    function setGovernance(address _governance) external onlyGovernance {
         governance = _governance;
     }
 
-    function setController(address _controller) external {
-        require(msg.sender == governance, "!governance");
+    function setController(address _controller) external onlyGovernance {
         controller = _controller;
     }
 }

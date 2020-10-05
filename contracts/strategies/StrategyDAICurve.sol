@@ -39,6 +39,15 @@ contract StrategyDAICurve {
     address public governance;
     address public controller;
 
+    modifier onlyGovernance() { 
+        require(msg.sender == governance, "!governance");
+        _;
+    }
+    modifier onlyController() { 
+        require(msg.sender == controller, "!controller");
+        _;
+    }
+
     constructor(address _controller) public {
         governance = msg.sender;
         controller = _controller;
@@ -70,8 +79,7 @@ contract StrategyDAICurve {
     }
 
     // Controller only function for creating additional rewards from dust
-    function withdraw(IERC20 _asset) external returns (uint256 balance) {
-        require(msg.sender == controller, "!controller");
+    function withdraw(IERC20 _asset) external returns (uint256 balance) onlyController {
         require(want != address(_asset), "want");
         require(y != address(_asset), "y");
         require(ycrv != address(_asset), "ycrv");
@@ -81,8 +89,7 @@ contract StrategyDAICurve {
     }
 
     // Withdraw partial funds, normally used with a vault withdrawal
-    function withdraw(uint256 _amount) external {
-        require(msg.sender == controller, "!controller");
+    function withdraw(uint256 _amount) external onlyController {
         uint256 _balance = IERC20(want).balanceOf(address(this));
         if (_balance < _amount) {
             _amount = _withdrawSome(_amount.sub(_balance));
@@ -95,8 +102,7 @@ contract StrategyDAICurve {
     }
 
     // Withdraw all funds, normally used when migrating strategies
-    function withdrawAll() external returns (uint256 balance) {
-        require(msg.sender == controller, "!controller");
+    function withdrawAll() external returns (uint256 balance) onlyController {
         _withdrawAll();
 
         balance = IERC20(want).balanceOf(address(this));
@@ -185,13 +191,11 @@ contract StrategyDAICurve {
         return balanceOfWant().add(balanceOfYYCRVinyTUSD());
     }
 
-    function setGovernance(address _governance) external {
-        require(msg.sender == governance, "!governance");
+    function setGovernance(address _governance) external onlyGovernance {
         governance = _governance;
     }
 
-    function setController(address _controller) external {
-        require(msg.sender == governance, "!governance");
+    function setController(address _controller) external onlyGovernance {
         controller = _controller;
     }
 }

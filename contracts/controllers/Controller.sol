@@ -29,6 +29,15 @@ contract Controller {
 
     uint256 public split = 500;
     uint256 public constant max = 10000;
+    
+    modifier onlyGovernance() { 
+        require(msg.sender == governance, "!governance");
+        _;
+    }
+    modifier onlyStrategist(){
+        require(msg.sender == strategist || msg.sender == governance, "!strategist");
+        _;
+    }
 
     constructor(address _rewards) public {
         governance = msg.sender;
@@ -37,44 +46,36 @@ contract Controller {
         rewards = _rewards;
     }
 
-    function setRewards(address _rewards) public {
-        require(msg.sender == governance, "!governance");
+    function setRewards(address _rewards) public onlyGovernance {
         rewards = _rewards;
     }
 
-    function setStrategist(address _strategist) public {
-        require(msg.sender == governance, "!governance");
+    function setStrategist(address _strategist) public onlyGovernance {
         strategist = _strategist;
     }
 
-    function setSplit(uint256 _split) public {
-        require(msg.sender == governance, "!governance");
+    function setSplit(uint256 _split) public onlyGovernance {
         split = _split;
     }
 
-    function setOneSplit(address _onesplit) public {
-        require(msg.sender == governance, "!governance");
+    function setOneSplit(address _onesplit) public onlyGovernance {
         onesplit = _onesplit;
     }
 
-    function setGovernance(address _governance) public {
-        require(msg.sender == governance, "!governance");
+    function setGovernance(address _governance) public onlyGovernance {
         governance = _governance;
     }
 
-    function setVault(address _token, address _vault) public {
-        require(msg.sender == strategist || msg.sender == governance, "!strategist");
+    function setVault(address _token, address _vault) public onlyStrategist{
         require(vaults[_token] == address(0), "vault");
         vaults[_token] = _vault;
     }
 
-    function approveStrategy(address _token, address _strategy) public {
-        require(msg.sender == governance, "!governance");
+    function approveStrategy(address _token, address _strategy) public onlyGovernance {
         approvedStrategies[_token][_strategy] = true;
     }
 
-    function revokeStrategy(address _token, address _strategy) public {
-        require(msg.sender == governance, "!governance");
+    function revokeStrategy(address _token, address _strategy) public onlyGovernance {
         approvedStrategies[_token][_strategy] = false;
     }
 
@@ -82,13 +83,11 @@ contract Controller {
         address _input,
         address _output,
         address _converter
-    ) public {
-        require(msg.sender == strategist || msg.sender == governance, "!strategist");
+    ) public onlyStrategist {
         converters[_input][_output] = _converter;
     }
 
-    function setStrategy(address _token, address _strategy) public {
-        require(msg.sender == strategist || msg.sender == governance, "!strategist");
+    function setStrategy(address _token, address _strategy) public onlyStrategist {
         require(approvedStrategies[_token][_strategy] == true, "!approved");
 
         address _current = strategies[_token];
@@ -116,18 +115,15 @@ contract Controller {
         return Strategy(strategies[_token]).balanceOf();
     }
 
-    function withdrawAll(address _token) public {
-        require(msg.sender == strategist || msg.sender == governance, "!strategist");
+    function withdrawAll(address _token) public onlyStrategist {
         Strategy(strategies[_token]).withdrawAll();
     }
 
-    function inCaseTokensGetStuck(address _token, uint256 _amount) public {
-        require(msg.sender == strategist || msg.sender == governance, "!governance");
+    function inCaseTokensGetStuck(address _token, uint256 _amount) public onlyStrategist {
         IERC20(_token).safeTransfer(msg.sender, _amount);
     }
 
-    function inCaseStrategyTokenGetStuck(address _strategy, address _token) public {
-        require(msg.sender == strategist || msg.sender == governance, "!governance");
+    function inCaseStrategyTokenGetStuck(address _strategy, address _token) public onlyStrategist {
         Strategy(_strategy).withdraw(_token);
     }
 
@@ -146,8 +142,7 @@ contract Controller {
         address _strategy,
         address _token,
         uint256 parts
-    ) public {
-        require(msg.sender == strategist || msg.sender == governance, "!governance");
+    ) public onlyStrategist {
         // This contract should never have value in it, but just incase since this is a public call
         uint256 _before = IERC20(_token).balanceOf(address(this));
         Strategy(_strategy).withdraw(_token);
